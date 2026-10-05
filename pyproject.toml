@@ -1,0 +1,20 @@
+[project]
+name = "apkg-spec"
+version = "0.0.0"
+description = "A specification of the Anki .apkg format, with a conformance corpus and an eval harness."
+requires-python = ">=3.11"
+dependencies = ["anki==26.8.1", "zstandard", "pyyaml"]
+
+[dependency-groups]
+dev = ["pytest", "ruff"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["oracle", "eval"]
+markers = ["claim(id): the SPEC.md claim this test proves"]
+
+[tool.ruff]
+line-length = 100

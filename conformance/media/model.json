@@ -1,0 +1,79 @@
+{
+  "notetypes": [
+    {
+      "name": "Basic",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0
+    }
+  ],
+  "notes": [
+    {
+      "guid": "media-0",
+      "notetype": "Basic",
+      "fields": [
+        "<img src=\"red.png\">",
+        "<img src=\"green dot.png\">"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "media-1",
+      "notetype": "Basic",
+      "fields": [
+        "<img src=\"café.png\">",
+        "[sound:tone.mp3]"
+      ],
+      "tags": []
+    }
+  ],
+  "cards": [
+    {
+      "note": "media-0",
+      "ord": 0,
+      "deck": "media",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "media-1",
+      "ord": 0,
+      "deck": "media",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "media",
+      "description": ""
+    }
+  ],
+  "media": {
+    "café.png": "5c3997201702e9d97f0236823cc9390230d7abde",
+    "green dot.png": "8193600e22db7bf38e29ee3c995230ce05a3e37c",
+    "red.png": "f675cd548cfa86fd62d794988b0d387f215a623d",
+    "tone.mp3": "893b916048b5c06766e102ad3d6fb5e73556ae1f"
+  }
+}

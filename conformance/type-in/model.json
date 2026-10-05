@@ -1,0 +1,53 @@
+{
+  "notetypes": [
+    {
+      "name": "Basic (type in the answer)",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}\n\n{{type:Back}}",
+          "afmt": "{{Front}}\n\n<hr id=answer>\n\n{{type:Back}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0
+    }
+  ],
+  "notes": [
+    {
+      "guid": "type-in-0",
+      "notetype": "Basic (type in the answer)",
+      "fields": [
+        "Chemical symbol for gold",
+        "Au"
+      ],
+      "tags": []
+    }
+  ],
+  "cards": [
+    {
+      "note": "type-in-0",
+      "ord": 0,
+      "deck": "type-in",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "type-in",
+      "description": ""
+    }
+  ],
+  "media": {}
+}

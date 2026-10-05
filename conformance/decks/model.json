@@ -1,0 +1,78 @@
+{
+  "notetypes": [
+    {
+      "name": "Basic",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0
+    }
+  ],
+  "notes": [
+    {
+      "guid": "decks-0",
+      "notetype": "Basic",
+      "fields": [
+        "in parent",
+        "p"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "decks-1",
+      "notetype": "Basic",
+      "fields": [
+        "in grandchild",
+        "g"
+      ],
+      "tags": []
+    }
+  ],
+  "cards": [
+    {
+      "note": "decks-0",
+      "ord": 0,
+      "deck": "decks",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "decks-1",
+      "ord": 0,
+      "deck": "decks::Child::Grandchild",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "decks",
+      "description": ""
+    },
+    {
+      "name": "decks::Child::Grandchild",
+      "description": "A <b>nested</b> deck."
+    }
+  ],
+  "media": {}
+}

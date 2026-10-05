@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/shbernal/apkg-spec/model.schema.json",
+  "title": "Canonical .apkg model",
+  "description": "What an .apkg holds, independent of package version, schema version, ids and clocks. oracle/model.py is the reference reader. Arrays are sorted as stated so that two equal models are equal JSON.",
+  "type": "object",
+  "required": ["notetypes", "notes", "cards", "decks", "media"],
+  "properties": {
+    "notetypes": {
+      "description": "Notetypes that at least one note uses, sorted by name.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "kind", "fields", "templates", "css", "sortField"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "kind": { "enum": ["normal", "cloze"] },
+          "fields": { "type": "array", "items": { "type": "string" } },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "qfmt", "afmt"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "qfmt": { "type": "string" },
+                "afmt": { "type": "string" }
+              }
+            }
+          },
+          "css": { "type": "string" },
+          "sortField": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "notes": {
+      "description": "Sorted by guid.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["guid", "notetype", "fields", "tags"],
+        "additionalProperties": false,
+        "properties": {
+          "guid": { "type": "string" },
+          "notetype": { "type": "string", "description": "The notetype's name." },
+          "fields": { "type": "array", "items": { "type": "string" } },
+          "tags": { "type": "array", "items": { "type": "string" }, "description": "Sorted." }
+        }
+      }
+    },
+    "cards": {
+      "description": "Sorted by note guid, then ord. Scheduling values are as stored, not as displayed.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["note", "ord", "deck", "type", "queue", "due", "ivl", "factor", "reps", "lapses"],
+        "additionalProperties": false,
+        "properties": {
+          "note": { "type": "string", "description": "The note's guid." },
+          "ord": { "type": "integer", "minimum": 0 },
+          "deck": { "type": "string", "description": "Full deck name, levels joined by ::." },
+          "type": { "type": "integer" },
+          "queue": { "type": "integer" },
+          "due": { "type": "integer" },
+          "ivl": { "type": "integer" },
+          "factor": { "type": "integer" },
+          "reps": { "type": "integer" },
+          "lapses": { "type": "integer" }
+        }
+      }
+    },
+    "decks": {
+      "description": "Decks that hold at least one card, sorted by name.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "media": {
+      "description": "Filename to the lowercase hex sha1 of the file's bytes.",
+      "type": "object",
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+    }
+  }
+}

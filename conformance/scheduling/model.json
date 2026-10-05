@@ -1,0 +1,137 @@
+{
+  "notetypes": [
+    {
+      "name": "Basic",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0
+    }
+  ],
+  "notes": [
+    {
+      "guid": "scheduling-0",
+      "notetype": "Basic",
+      "fields": [
+        "card 0",
+        "0"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "scheduling-1",
+      "notetype": "Basic",
+      "fields": [
+        "card 1",
+        "1"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "scheduling-2",
+      "notetype": "Basic",
+      "fields": [
+        "card 2",
+        "2"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "scheduling-3",
+      "notetype": "Basic",
+      "fields": [
+        "card 3",
+        "3"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "scheduling-4",
+      "notetype": "Basic",
+      "fields": [
+        "card 4",
+        "4"
+      ],
+      "tags": []
+    }
+  ],
+  "cards": [
+    {
+      "note": "scheduling-0",
+      "ord": 0,
+      "deck": "scheduling",
+      "type": 2,
+      "queue": 2,
+      "due": 3,
+      "ivl": 3,
+      "factor": 2500,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "scheduling-1",
+      "ord": 0,
+      "deck": "scheduling",
+      "type": 2,
+      "queue": 2,
+      "due": 10,
+      "ivl": 10,
+      "factor": 2500,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "scheduling-2",
+      "ord": 0,
+      "deck": "scheduling",
+      "type": 0,
+      "queue": -1,
+      "due": 3,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "scheduling-3",
+      "ord": 0,
+      "deck": "scheduling",
+      "type": 0,
+      "queue": -3,
+      "due": 4,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "scheduling-4",
+      "ord": 0,
+      "deck": "scheduling",
+      "type": 0,
+      "queue": 0,
+      "due": 5,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "scheduling",
+      "description": ""
+    }
+  ],
+  "media": {}
+}

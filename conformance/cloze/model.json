@@ -1,0 +1,100 @@
+{
+  "notetypes": [
+    {
+      "name": "Cloze",
+      "kind": "cloze",
+      "fields": [
+        "Text",
+        "Back Extra"
+      ],
+      "templates": [
+        {
+          "name": "Cloze",
+          "qfmt": "{{cloze:Text}}",
+          "afmt": "{{cloze:Text}}<br>\n{{Back Extra}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n.cloze {\n    font-weight: bold;\n    color: blue;\n}\n.nightMode .cloze {\n    color: lightblue;\n}\n",
+      "sortField": 0
+    }
+  ],
+  "notes": [
+    {
+      "guid": "cloze-0",
+      "notetype": "Cloze",
+      "fields": [
+        "{{c1::Ottawa}} is the capital of {{c2::Canada}}.",
+        ""
+      ],
+      "tags": []
+    },
+    {
+      "guid": "cloze-1",
+      "notetype": "Cloze",
+      "fields": [
+        "{{c1::H}}{{c1::2}}O and {{c3::NaCl::salt}}",
+        "chemistry"
+      ],
+      "tags": [
+        "chem"
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "note": "cloze-0",
+      "ord": 0,
+      "deck": "cloze",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "cloze-0",
+      "ord": 1,
+      "deck": "cloze",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "cloze-1",
+      "ord": 0,
+      "deck": "cloze",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "cloze-1",
+      "ord": 2,
+      "deck": "cloze",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "cloze",
+      "description": ""
+    }
+  ],
+  "media": {}
+}

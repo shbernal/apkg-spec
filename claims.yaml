@@ -1,0 +1,116 @@
+# Every normative statement in SPEC.md, one row each.
+#
+#   id         stable; SPEC.md cites it as [APKG-…]; never reused or renumbered
+#   statement  the claim, testable as written
+#   source     where upstream Anki defines it, at tag 26.08.1
+#   level      MUST (a reader or writer breaks without it), SHOULD, or OBSERVED
+#              (what current Anki does, with no promise behind it)
+#
+# A claim counts toward the `claims` score once a test in tests/ carries
+# @pytest.mark.claim("<id>") and passes. A claim proven wrong is reworded, not
+# deleted, and the test that disproved it stays.
+
+anki: "26.08.1"
+
+claims:
+  # Container
+  - id: APKG-ZIP-001
+    statement: An .apkg file is a zip archive.
+    source: rslib/src/import_export/package/apkg/export.rs
+    level: MUST
+  - id: APKG-VER-001
+    statement: A `meta` entry, when present, holds a serialized PackageMetadata message whose `version` names the package version.
+    source: proto/anki/import_export.proto
+    level: MUST
+  - id: APKG-VER-002
+    statement: Without a `meta` entry, a package holding `collection.anki21` is version 2, and any other package is version 1.
+    source: rslib/src/import_export/package/meta.rs
+    level: MUST
+  - id: APKG-VER-003
+    statement: Current Anki writes a `meta` entry in both export modes, with version 2 for a legacy export and version 3 otherwise. It cannot write version 1.
+    source: rslib/src/import_export/package/meta.rs (Meta::new_legacy)
+    level: OBSERVED
+  - id: APKG-COL-001
+    statement: The collection entry is `collection.anki2` in version 1, `collection.anki21` in version 2 and `collection.anki21b` in version 3.
+    source: rslib/src/import_export/package/meta.rs
+    level: MUST
+  - id: APKG-COL-002
+    statement: In version 3 the collection entry is zstd-compressed. In versions 1 and 2 it is a plain SQLite file.
+    source: rslib/src/import_export/package/meta.rs
+    level: MUST
+  - id: APKG-COL-003
+    statement: Version 2 and 3 packages written by current Anki also carry a schema 11 `collection.anki2` that holds one placeholder note, for clients too old to read the real collection.
+    source: rslib/src/import_export/package/colpkg/export.rs (write_dummy_collection)
+    level: OBSERVED
+  - id: APKG-COL-004
+    statement: The collection is schema 11 in versions 1 and 2, and schema 18 in version 3, as `col.ver` records.
+    source: rslib/src/import_export/package/meta.rs
+    level: MUST
+
+  # Media
+  - id: APKG-MED-001
+    statement: Media files are stored under zip entry names that are decimal integers, never under their real filenames.
+    source: rslib/src/import_export/package/media.rs
+    level: MUST
+  - id: APKG-MED-002
+    statement: In versions 1 and 2 the `media` entry is a JSON object that maps each zip entry name to a filename.
+    source: rslib/src/import_export/package/media.rs
+    level: MUST
+  - id: APKG-MED-003
+    statement: In version 3 the `media` entry is a zstd-compressed MediaEntries message. The position of an entry in `entries` is its zip entry name, and each entry carries the filename, size and sha1.
+    source: proto/anki/import_export.proto
+    level: MUST
+  - id: APKG-MED-004
+    statement: In version 3 each media file is zstd-compressed on its own.
+    source: rslib/src/import_export/package/media.rs
+    level: MUST
+  - id: APKG-MED-005
+    statement: An export includes only the media files that the exported notes reference.
+    source: rslib/src/import_export/package/apkg/export.rs
+    level: OBSERVED
+
+  # Notes
+  - id: APKG-NOTE-001
+    statement: "`notes.flds` holds the field values in notetype order, joined by U+001F."
+    source: rslib/src/storage/note/mod.rs
+    level: MUST
+  - id: APKG-NOTE-002
+    statement: "`notes.csum` is the first 8 hex digits of the sha1 of the HTML-stripped first field, read as an integer."
+    source: rslib/src/notes/mod.rs (field_checksum)
+    level: SHOULD
+  - id: APKG-NOTE-003
+    statement: "`notes.sfld` is the sort field with HTML stripped and media filenames kept."
+    source: rslib/src/text.rs (strip_html_preserving_media_filenames)
+    level: SHOULD
+  - id: APKG-NOTE-004
+    statement: "`notes.id` and `cards.id` are milliseconds since the epoch. `notes.mod` and `cards.mod` are seconds."
+    source: rslib/src/storage/schema11.sql
+    level: MUST
+  - id: APKG-NOTE-005
+    statement: "`notes.tags` holds the tags separated by single spaces, with one leading and one trailing space."
+    source: rslib/src/storage/note/mod.rs
+    level: OBSERVED
+
+  # Cards
+  - id: APKG-CARD-001
+    statement: For a new card, `cards.due` is its 1-based position in the new queue.
+    source: rslib/src/scheduler/new.rs
+    level: SHOULD
+  - id: APKG-CARD-002
+    statement: "`cards.queue` is -3 for a manually buried card, -2 for a scheduler-buried card, -1 for a suspended card, 0 new, 1 learning, 2 review, 3 day-learning."
+    source: rslib/src/card/mod.rs (CardQueue)
+    level: MUST
+
+  # Import behavior
+  - id: APKG-IMP-001
+    statement: Import matches notes by guid. A second import of the same package adds no notes.
+    source: rslib/src/import_export/package/apkg/import/notes.rs
+    level: MUST
+  - id: APKG-IMP-002
+    statement: Import recomputes `csum` and does not reject a package whose stored checksums are wrong.
+    source: rslib/src/import_export/package/apkg/import/notes.rs
+    level: OBSERVED
+  - id: APKG-IMP-003
+    statement: Import rejects a note whose field count differs from the field count of its notetype.
+    source: rslib/src/import_export/package/apkg/import/notes.rs
+    level: OBSERVED

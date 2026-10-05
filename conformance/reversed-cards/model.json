@@ -1,0 +1,151 @@
+{
+  "notetypes": [
+    {
+      "name": "Basic (and reversed card)",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}"
+        },
+        {
+          "name": "Card 2",
+          "qfmt": "{{Back}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Front}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0
+    },
+    {
+      "name": "Basic (optional reversed card)",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back",
+        "Add Reverse"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}"
+        },
+        {
+          "name": "Card 2",
+          "qfmt": "{{#Add Reverse}}{{Back}}{{/Add Reverse}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Front}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0
+    }
+  ],
+  "notes": [
+    {
+      "guid": "reversed-cards-0",
+      "notetype": "Basic (and reversed card)",
+      "fields": [
+        "chien",
+        "dog"
+      ],
+      "tags": [
+        "french"
+      ]
+    },
+    {
+      "guid": "reversed-cards-1",
+      "notetype": "Basic (optional reversed card)",
+      "fields": [
+        "chat",
+        "cat",
+        "y"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "reversed-cards-2",
+      "notetype": "Basic (optional reversed card)",
+      "fields": [
+        "oiseau",
+        "bird",
+        ""
+      ],
+      "tags": []
+    }
+  ],
+  "cards": [
+    {
+      "note": "reversed-cards-0",
+      "ord": 0,
+      "deck": "reversed-cards",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "reversed-cards-0",
+      "ord": 1,
+      "deck": "reversed-cards",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "reversed-cards-1",
+      "ord": 0,
+      "deck": "reversed-cards",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "reversed-cards-1",
+      "ord": 1,
+      "deck": "reversed-cards",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "reversed-cards-2",
+      "ord": 0,
+      "deck": "reversed-cards",
+      "type": 0,
+      "queue": 0,
+      "due": 3,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "reversed-cards",
+      "description": ""
+    }
+  ],
+  "media": {}
+}
