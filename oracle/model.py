@@ -68,6 +68,17 @@ def media_map(archive: zipfile.ZipFile, version: int) -> dict[str, str]:
     }
 
 
+def read_media(package: Path) -> dict[str, bytes]:
+    """Media filename -> its bytes, decompressed."""
+    with zipfile.ZipFile(package) as archive:
+        version = package_version(archive)
+        media: dict[str, bytes] = {}
+        for entry, name in media_map(archive, version).items():
+            blob = archive.read(entry)
+            media[name] = unzstd(blob) if version == 3 else blob
+        return media
+
+
 def read_model(package: Path) -> dict[str, Any]:
     """Open the package's collection directly, without an import in between."""
     tmp = Path(tempfile.mkdtemp())
@@ -77,12 +88,7 @@ def read_model(package: Path) -> dict[str, Any]:
             data = archive.read(COLLECTION_ENTRY[version])
             if version == 3:
                 data = unzstd(data)
-            media: dict[str, str] = {}
-            for entry, name in media_map(archive, version).items():
-                blob = archive.read(entry)
-                if version == 3:
-                    blob = unzstd(blob)
-                media[name] = hashlib.sha1(blob).hexdigest()
+        media = {name: hashlib.sha1(blob).hexdigest() for name, blob in read_media(package).items()}
         path = tmp / "collection.anki2"
         path.write_bytes(data)
         col = Collection(str(path))

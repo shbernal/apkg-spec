@@ -71,14 +71,23 @@ with the reader's API. The package's own gates (`pnpm test`, `lint`,
 
 ### 3. Writer
 
-A new package writes the canonical model as a version 3 package. Add it to
-`eval/implementations.toml` with a `write` command, commit, then:
+Make `anki-apkg-export` write the canonical model, one package version per run:
+version 2 first, since it is legacy schema 11 the package already emits and
+every Anki client imports; then version 3. `write_versions` in
+`eval/implementations.toml` lists the versions scored, so adding `3` there is
+the commit that precedes the second run.
 
 ```sh
-uv run eval/goal.py start --target write:<package>=100 \
+uv run eval/goal.py start --target write-v2:anki-apkg-export=100 \
+  --target read:anki-apkg-export=100 \
   --lock 'conformance/**' --lock 'oracle/**' --lock 'tests/**' --lock claims.yaml \
-  --clean ../<package>
+  --clean ../anki-apkg-export
 ```
+
+The read target is there so the writer cannot be bought with a reader
+regression. `adapters/anki-apkg-export/write.mjs` maps the model onto the
+package's own write API and is not locked. The writer gets the media bytes from
+a directory beside the model, since the model holds only hashes.
 
 ### 4. Real decks
 

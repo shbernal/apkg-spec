@@ -9,8 +9,10 @@ Metrics, each a percentage:
     claims            claims in claims.yaml with a passing test and no failing one
     spec              claims SPEC.md cites, with no TODO left in it
     read:<impl>       model sections the implementation reads right, per package
-    write:<impl>      sections that survive the implementation's write, read by Anki
-    roundtrip:<impl>  write(read(package)), on the local corpus
+    write-v<N>:<impl>      sections that survive a package version N write, read by Anki
+    roundtrip-v<N>:<impl>  write(read(package)) as version N, on the local corpus
+
+An implementation's `write_versions` (default [2]) lists the versions scored.
 
 Packages come from `conformance/` (synthetic, committed) and `corpus/local/`
 (real decks, never committed). One package in five of the corpus is held out
@@ -29,6 +31,7 @@ import sys
 import tempfile
 import time
 import tomllib
+import zipfile
 from dataclasses import dataclass, field
 from fnmatch import fnmatch
 from pathlib import Path
@@ -39,7 +42,14 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "oracle"))
 
-from model import SECTIONS, acceptance_problems, diff, read_model
+from model import (
+    SECTIONS,
+    acceptance_problems,
+    diff,
+    package_version,
+    read_media,
+    read_model,
+)
 
 GOAL = ROOT / "eval" / "goal.json"
 HISTORY = ROOT / "eval" / "history.jsonl"
@@ -113,15 +123,37 @@ def read_with(impl: dict, package: Path) -> tuple[dict | None, str | None]:
         return None, f"read printed invalid JSON: {error}"
 
 
-def write_with(impl: dict, model: dict, out: Path) -> str | None:
+def media_dir(package: Path, work: Path) -> Path:
+    """The package's media as files named as the model names them.
+
+    The model carries only hashes, so a writer reads the bytes from here. Corpus
+    round trips take them from the source package too: the read side already
+    scored the hashes.
+    """
+    out = work / f"media-{hashlib.sha1(str(package).encode()).hexdigest()[:12]}"
+    if not out.is_dir():
+        out.mkdir()
+        for name, blob in read_media(package).items():
+            (out / name).write_bytes(blob)
+    return out
+
+
+def write_with(impl: dict, model: dict, media: Path, version: int, out: Path) -> str | None:
     model_path = out.with_suffix(".json")
     model_path.write_text(json.dumps(model, ensure_ascii=False))
     try:
-        proc = run(impl["write"], model=model_path, output=out)
+        proc = run(impl["write"], model=model_path, media=media, version=version, output=out)
     except subprocess.TimeoutExpired:
         return "write timed out"
     if proc.returncode != 0 or not out.is_file():
         return f"write exited {proc.returncode}: {proc.stderr.strip()[-300:]}"
+    try:
+        with zipfile.ZipFile(out) as archive:
+            written = package_version(archive)
+    except zipfile.BadZipFile:
+        return "write produced no zip"
+    if written != version:
+        return f"asked for package version {version}, wrote {written}"
     if problems := acceptance_problems(out):
         return "anki refused: " + "; ".join(problems)
     return None
@@ -129,9 +161,10 @@ def write_with(impl: dict, model: dict, out: Path) -> str | None:
 
 def score_implementation(name: str, impl: dict, pkgs: list, oracle_cache: dict) -> dict[str, Score]:
     scores: dict[str, Score] = {"read": Score()}
-    if impl.get("write"):
-        scores["write"] = Score()
-        scores["roundtrip"] = Score()
+    versions = impl.get("write_versions", [2]) if impl.get("write") else []
+    for version in versions:
+        scores[f"write-v{version}"] = Score()
+        scores[f"roundtrip-v{version}"] = Score()
     work = Path(tempfile.mkdtemp(prefix=f"apkg-eval-{name}-"))
     for label, package, expected in pkgs:
         if expected is None:
@@ -147,22 +180,23 @@ def score_implementation(name: str, impl: dict, pkgs: list, oracle_cache: dict) 
         else:
             score_sections(scores["read"], label, expected, actual)
 
-        if "write" not in scores:
-            continue
         # Synthetic cases test the writer on the oracle's model; corpus cases
         # test the full round trip on what the implementation itself read.
-        key, source = ("roundtrip", actual) if is_corpus else ("write", expected)
-        out = work / (label.replace("/", "_") + ".apkg")
-        if source is None:
-            error = "nothing read to write"
-        else:
-            error = write_with(impl, source, out)
-        if error:
-            for section in SECTIONS:
-                scores[key].add(False, f"{label} {section}: {error}")
-        else:
-            score_sections(scores[key], label, expected, _oracle_model(out))
-    return scores
+        for version in versions:
+            kind, source = ("roundtrip", actual) if is_corpus else ("write", expected)
+            key = f"{kind}-v{version}"
+            out = work / f"{label.replace('/', '_')}.v{version}.apkg"
+            if source is None:
+                error = "nothing read to write"
+            else:
+                error = write_with(impl, source, media_dir(package, work), version, out)
+            if error:
+                for section in SECTIONS:
+                    scores[key].add(False, f"{label} {section}: {error}")
+            else:
+                score_sections(scores[key], label, expected, _oracle_model(out))
+    # No corpus means no round trip, which is no score rather than 0%.
+    return {kind: score for kind, score in scores.items() if score.total}
 
 
 def _conformance_cases() -> list[str]:

@@ -1,10 +1,15 @@
 # Implementations under test. Each command runs from the repository root.
 #
 #   read   prints the canonical model (model.schema.json) of {input} on stdout
-#   write  writes {model}, a canonical model file, to {output} as an .apkg
+#   write  writes {model}, a canonical model file, to {output} as a package of
+#          version {version}; {media} is a directory holding each media file
+#          the model names, under that name, since the model holds only hashes
+#   write_versions  the package versions to score `write` at; [2] by default
 #
 # Leave `write` out for a read-only implementation.
 
 [anki-apkg-export]
 read = "node adapters/anki-apkg-export/read.mjs {input}"
+write = "node adapters/anki-apkg-export/write.mjs {model} {media} {output} --version {version}"
+write_versions = [2]
 build = "sh -c 'cd ../anki-apkg-export && pnpm run build'"

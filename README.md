@@ -15,8 +15,8 @@ test does not count.
 
 ## Test an implementation
 
-Add a `read` command, and optionally a `write` command, to
-`eval/implementations.toml`, then:
+Add a `read` command, and optionally a `write` command and the package versions
+it writes, to `eval/implementations.toml`, then:
 
 ```sh
 uv run eval/run.py
