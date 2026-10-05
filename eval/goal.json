@@ -1,0 +1,17 @@
+{
+  "targets": {
+    "read:anki-apkg-export": 100.0
+  },
+  "locked": [
+    ".claude/**",
+    "claims.yaml",
+    "conformance/**",
+    "eval/**",
+    "oracle/**",
+    "tests/**"
+  ],
+  "clean": [
+    "../anki-apkg-export"
+  ],
+  "maxBlocks": 40
+}
