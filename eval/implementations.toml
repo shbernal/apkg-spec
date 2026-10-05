@@ -7,4 +7,4 @@
 
 [anki-apkg-export]
 read = "node adapters/anki-apkg-export/read.mjs {input}"
-build = "pnpm -C ../anki-apkg-export run build"
+build = "sh -c 'cd ../anki-apkg-export && pnpm run build'"

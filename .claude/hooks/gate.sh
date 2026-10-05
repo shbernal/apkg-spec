@@ -20,6 +20,6 @@ fi
 echo "$blocks" > "$blocks_file"
 {
   echo "The goal gate has not passed (blocked stop $blocks of $max). Keep working."
-  echo "$output" | grep -E '^(SCORE|GATE|BUILD|    [-…])'
+  echo "$output" | grep -E '^(SCORE|GATE|BUILD|    [-…])' || echo "$output" | tail -20
 } >&2
 exit 2
