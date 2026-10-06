@@ -119,6 +119,9 @@ def collection_model(col: Collection) -> dict[str, Any]:
                 ],
                 "css": nt["css"],
                 "sortField": nt["sortf"],
+                "latexPre": nt["latexPre"],
+                "latexPost": nt["latexPost"],
+                "latexSvg": bool(nt.get("latexsvg", False)),
             }
         )
 

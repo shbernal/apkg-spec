@@ -105,3 +105,24 @@ def test_reference_without_file(conformance: Path, version: str) -> None:
         assert len(log.new) == 1
         assert not log.conflicting and not log.missing_notetype and not log.missing_deck
         assert set(col.media.check().missing) == {"absent.png", "cmn-缺.mp3"}
+
+
+@pytest.mark.claim("APKG-MED-007")
+@pytest.mark.parametrize("version", ["v2", "v3"])
+def test_latex_image_name(conformance: Path, version: str) -> None:
+    package = conformance / "latex" / f"{version}.apkg"
+    png = f"latex-{hashlib.sha1(b'x^2').hexdigest()}.png"
+    assert png in committed_media(package)
+    assert sum(name.endswith(".svg") for name in committed_media(package)) == 1
+    with fresh_collection() as col:
+        import_package(col, package)
+        assert not col.media.check().missing
+        nt = col.models.by_name("LaTeX SVG")
+        assert nt is not None and nt["latexsvg"]
+        nt["latexPre"] += "% a changed header"
+        col.models.save(nt)
+        assert not col.media.check().missing
+        nt["latexsvg"] = False
+        col.models.save(nt)
+        (missing,) = col.media.check().missing
+        assert missing.endswith(".png") and missing[:-4] + ".svg" in committed_media(package)

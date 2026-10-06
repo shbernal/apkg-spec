@@ -32,6 +32,9 @@ const model = {
       templates: nt.templates.map(({ name, qfmt, afmt }) => ({ name, qfmt, afmt })),
       css: nt.css,
       sortField: nt.sortField,
+      latexPre: nt.latexPre,
+      latexPost: nt.latexPost,
+      latexSvg: nt.latexSvg,
     }))
     .sort(byName),
   notes: pkg.notes

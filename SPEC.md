@@ -154,6 +154,13 @@ note, and only a media check reports the file missing [APKG-MED-006]. A reader
 SHOULD tolerate it, and a writer SHOULD pass the reference through rather than
 fail or drop it.
 
+A LaTeX reference names a file the deck carries already rendered:
+`latex-<sha1>.svg` when the notetype's `latexsvg` is set, `.png` otherwise, with
+the sha1 taken over the LaTeX source [APKG-MED-007]. The notetype's LaTeX header
+and footer (`latexPre`, `latexPost`) are what the image was rendered with but do
+not enter its name. A writer MUST keep `latexsvg`, or the note looks for a file
+the package does not hold.
+
 ## 7. Import behavior
 
 Import matches notes by guid, so a second import of the same package adds no

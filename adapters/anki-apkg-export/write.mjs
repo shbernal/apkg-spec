@@ -39,6 +39,9 @@ const pkg = await writeApkg(
       templates: nt.templates,
       css: nt.css,
       sortField: nt.sortField,
+      latexPre: nt.latexPre,
+      latexPost: nt.latexPost,
+      latexSvg: nt.latexSvg,
     })),
     notes: model.notes.map((n) => ({
       id: noteIds.get(n.guid),

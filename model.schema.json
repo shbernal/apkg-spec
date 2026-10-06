@@ -11,7 +11,17 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "kind", "fields", "templates", "css", "sortField"],
+        "required": [
+          "name",
+          "kind",
+          "fields",
+          "templates",
+          "css",
+          "sortField",
+          "latexPre",
+          "latexPost",
+          "latexSvg"
+        ],
         "additionalProperties": false,
         "properties": {
           "name": { "type": "string" },
@@ -31,7 +41,10 @@
             }
           },
           "css": { "type": "string" },
-          "sortField": { "type": "integer", "minimum": 0 }
+          "sortField": { "type": "integer", "minimum": 0 },
+          "latexPre": { "type": "string", "description": "The LaTeX header a [latex] field is rendered with." },
+          "latexPost": { "type": "string", "description": "The LaTeX footer." },
+          "latexSvg": { "type": "boolean", "description": "Rendered LaTeX is .svg when true, .png when false." }
         }
       }
     },

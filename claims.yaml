@@ -72,6 +72,10 @@ claims:
     statement: A field may reference a media file the package does not contain. Export leaves such a file out without error, and import adds the note and reports the file only as missing in a media check.
     source: rslib/src/import_export/package/apkg/export.rs, rslib/src/media/check.rs
     level: OBSERVED
+  - id: APKG-MED-007
+    statement: "A LaTeX reference in a field (`[latex]…[/latex]`, `[$]…[/$]`, `[$$]…[/$$]`) names its rendered image `latex-<sha1>.svg` when the notetype's `latexsvg` is set and `latex-<sha1>.png` otherwise, where the sha1 is of the LaTeX source. The notetype's LaTeX header and footer do not enter the name, and export includes the image like any other referenced file."
+    source: rslib/src/latex.rs
+    level: MUST
 
   # Notes
   - id: APKG-NOTE-001
