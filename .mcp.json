@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "anki-web": {
+      "command": "npx",
+      "args": ["anki-web-mcp@latest"]
+    }
+  }
+}
+
+
