@@ -149,7 +149,10 @@ and `size` and `sha1` describe the decompressed bytes.
 
 An export includes only the media files that the exported notes reference
 [APKG-MED-005], through `<img src>`, `[sound:…]` and similar references in field
-values. A reader SHOULD tolerate a reference with no file behind it.
+values. A reference may have no file behind it: Anki exports and imports such a
+note, and only a media check reports the file missing [APKG-MED-006]. A reader
+SHOULD tolerate it, and a writer SHOULD pass the reference through rather than
+fail or drop it.
 
 ## 7. Import behavior
 

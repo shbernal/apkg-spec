@@ -203,8 +203,7 @@ def acceptance_problems(package: Path) -> list[str]:
         _, ok = col.fix_integrity()
         if not ok:
             problems.append("check database reported problems")
-        if missing := list(col.media.check().missing):
-            problems.append(f"missing media: {missing}")
+        problems.extend(f"missing media: {name}" for name in col.media.check().missing)
         return problems
     finally:
         col.close()

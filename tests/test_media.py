@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from anki.collection import DeckIdLimit
 from anki.import_export_pb2 import ExportAnkiPackageOptions, MediaEntries
-from apkg import fresh_collection, packages
+from apkg import fresh_collection, import_package, packages
 from model import unzstd
 
 FIXED = {"meta", "media", "collection.anki2", "collection.anki21", "collection.anki21b"}
@@ -93,3 +93,15 @@ def test_export_includes_only_referenced_media(tmp_path: Path, legacy: bool) -> 
         entries.ParseFromString(unzstd(raw))
         names = {e.name for e in entries.entries}
     assert names == {"used.png", "sound.mp3"}
+
+
+@pytest.mark.claim("APKG-MED-006")
+@pytest.mark.parametrize("version", ["v2", "v3"])
+def test_reference_without_file(conformance: Path, version: str) -> None:
+    package = conformance / "missing-media" / f"{version}.apkg"
+    assert set(committed_media(package)) == {"present.png"}
+    with fresh_collection() as col:
+        log = import_package(col, package)
+        assert len(log.new) == 1
+        assert not log.conflicting and not log.missing_notetype and not log.missing_deck
+        assert set(col.media.check().missing) == {"absent.png", "cmn-缺.mp3"}

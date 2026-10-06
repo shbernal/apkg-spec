@@ -68,6 +68,10 @@ claims:
     statement: An export includes only the media files that the exported notes reference.
     source: rslib/src/import_export/package/apkg/export.rs
     level: OBSERVED
+  - id: APKG-MED-006
+    statement: A field may reference a media file the package does not contain. Export leaves such a file out without error, and import adds the note and reports the file only as missing in a media check.
+    source: rslib/src/import_export/package/apkg/export.rs, rslib/src/media/check.rs
+    level: OBSERVED
 
   # Notes
   - id: APKG-NOTE-001

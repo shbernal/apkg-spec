@@ -127,6 +127,11 @@ def media(b: Builder) -> None:
     b.note("Basic", ['<img src="café.png">', "[sound:tone.mp3]"])
 
 
+def missing_media(b: Builder) -> None:
+    b.col.media.write_data("present.png", png((0, 0, 0)))
+    b.note("Basic", ['<img src="present.png"> <img src="absent.png">', "[sound:cmn-缺.mp3]"])
+
+
 def text_edge_cases(b: Builder) -> None:
     b.note("Basic", ["emoji 🦊 and CJK 今日", "RTL مرحبا"])
     b.note("Basic", ["&lt;b&gt; &amp; &nbsp;", "line<br>break\nnewline"])
@@ -172,6 +177,7 @@ CASES: dict[str, Callable[[Builder], None]] = {
     "cloze": cloze,
     "custom-notetype": custom_notetype,
     "media": media,
+    "missing-media": missing_media,
     "text-edge-cases": text_edge_cases,
     "decks": decks,
     "tags": tags,

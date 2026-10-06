@@ -22,10 +22,12 @@ by a hash of its name and is scored only with --heldout.
 from __future__ import annotations
 
 import argparse
+import functools
 import hashlib
 import json
 import os
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -138,7 +140,15 @@ def media_dir(package: Path, work: Path) -> Path:
     return out
 
 
-def write_with(impl: dict, model: dict, media: Path, version: int, out: Path) -> str | None:
+@functools.cache
+def source_problems(package: Path) -> frozenset[str]:
+    """What Anki already objects to in the package a model was read from."""
+    return frozenset(acceptance_problems(package))
+
+
+def write_with(
+    impl: dict, model: dict, media: Path, version: int, out: Path, origin: Path
+) -> str | None:
     model_path = out.with_suffix(".json")
     model_path.write_text(json.dumps(model, ensure_ascii=False))
     try:
@@ -154,7 +164,9 @@ def write_with(impl: dict, model: dict, media: Path, version: int, out: Path) ->
         return "write produced no zip"
     if written != version:
         return f"asked for package version {version}, wrote {written}"
-    if problems := acceptance_problems(out):
+    # A writer answers only for what it introduced: a deck whose notes already
+    # reference absent media still has them absent after a faithful write.
+    if problems := [p for p in acceptance_problems(out) if p not in source_problems(origin)]:
         return "anki refused: " + "; ".join(problems)
     return None
 
@@ -166,35 +178,40 @@ def score_implementation(name: str, impl: dict, pkgs: list, oracle_cache: dict) 
         scores[f"write-v{version}"] = Score()
         scores[f"roundtrip-v{version}"] = Score()
     work = Path(tempfile.mkdtemp(prefix=f"apkg-eval-{name}-"))
-    for label, package, expected in pkgs:
-        if expected is None:
-            expected = oracle_cache.setdefault(str(package), _oracle_model(package))
+    try:
+        for label, package, expected in pkgs:
             if expected is None:
-                continue  # the oracle cannot read it either; not a test case
-        is_corpus = not label.startswith(tuple(f"{c}/" for c in _conformance_cases()))
+                expected = oracle_cache.setdefault(str(package), _oracle_model(package))
+                if expected is None:
+                    continue  # the oracle cannot read it either; not a test case
+            is_corpus = not label.startswith(tuple(f"{c}/" for c in _conformance_cases()))
 
-        actual, error = read_with(impl, package)
-        if error:
-            for section in SECTIONS:
-                scores["read"].add(False, f"{label} {section}: {error}")
-        else:
-            score_sections(scores["read"], label, expected, actual)
-
-        # Synthetic cases test the writer on the oracle's model; corpus cases
-        # test the full round trip on what the implementation itself read.
-        for version in versions:
-            kind, source = ("roundtrip", actual) if is_corpus else ("write", expected)
-            key = f"{kind}-v{version}"
-            out = work / f"{label.replace('/', '_')}.v{version}.apkg"
-            if source is None:
-                error = "nothing read to write"
-            else:
-                error = write_with(impl, source, media_dir(package, work), version, out)
+            actual, error = read_with(impl, package)
             if error:
                 for section in SECTIONS:
-                    scores[key].add(False, f"{label} {section}: {error}")
+                    scores["read"].add(False, f"{label} {section}: {error}")
             else:
-                score_sections(scores[key], label, expected, _oracle_model(out))
+                score_sections(scores["read"], label, expected, actual)
+
+            # Synthetic cases test the writer on the oracle's model; corpus cases
+            # test the full round trip on what the implementation itself read.
+            for version in versions:
+                kind, source = ("roundtrip", actual) if is_corpus else ("write", expected)
+                key = f"{kind}-v{version}"
+                out = work / f"{label.replace('/', '_')}.v{version}.apkg"
+                if source is None:
+                    error = "nothing read to write"
+                else:
+                    error = write_with(
+                        impl, source, media_dir(package, work), version, out, package
+                    )
+                if error:
+                    for section in SECTIONS:
+                        scores[key].add(False, f"{label} {section}: {error}")
+                else:
+                    score_sections(scores[key], label, expected, _oracle_model(out))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
     # No corpus means no round trip, which is no score rather than 0%.
     return {kind: score for kind, score in scores.items() if score.total}
 
