@@ -11,5 +11,5 @@
 [anki-apkg-export]
 read = "node adapters/anki-apkg-export/read.mjs {input}"
 write = "node adapters/anki-apkg-export/write.mjs {model} {media} {output} --version {version}"
-write_versions = [2]
+write_versions = [2, 3]
 build = "sh -c 'cd ../anki-apkg-export && pnpm run build'"
