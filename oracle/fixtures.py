@@ -18,9 +18,11 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import sqlite3
 import struct
 import sys
 import tempfile
+import zipfile
 import zlib
 from collections.abc import Callable
 from pathlib import Path
@@ -181,6 +183,27 @@ def scheduling(b: Builder) -> None:
     # cards[4] stays new
 
 
+def string_ids(b: Builder) -> None:
+    b.note("Basic", ["in parent", "p"])
+    b.note("Basic", ["in child", "c"], deck=f"{b.case}::Child")
+
+
+def stringify_ids(collection: bytes) -> bytes:
+    """Rewrite each notetype and deck `id` in schema 11's JSON as a string of digits."""
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "collection.db"
+        path.write_bytes(collection)
+        db = sqlite3.connect(path)
+        for column in ("models", "decks"):
+            entries = json.loads(db.execute(f"select {column} from col").fetchone()[0])
+            for entry in entries.values():
+                entry["id"] = str(entry["id"])
+            db.execute(f"update col set {column} = ?", (json.dumps(entries),))
+        db.commit()
+        db.close()
+        return path.read_bytes()
+
+
 def many_notes(b: Builder) -> None:
     for i in range(300):
         b.note("Basic", [f"front {i:03}", f"back {i:03}"], [f"batch{i // 100}"])
@@ -200,7 +223,12 @@ CASES: dict[str, Callable[[Builder], None]] = {
     "tags": tags,
     "scheduling": scheduling,
     "many-notes": many_notes,
+    "string-ids": string_ids,
 }
+
+# Cases whose legacy collection is rewritten after export, for shapes current
+# Anki reads but no longer writes.
+LEGACY_REWRITES: dict[str, Callable[[bytes], bytes]] = {"string-ids": stringify_ids}
 
 
 def export(col: Collection, deck: str, out: Path, *, legacy: bool) -> None:
@@ -213,6 +241,14 @@ def export(col: Collection, deck: str, out: Path, *, legacy: bool) -> None:
     )
 
 
+def rewrite_entry(package: Path, entry: str, change: Callable[[bytes], bytes]) -> None:
+    with zipfile.ZipFile(package) as archive:
+        entries = [(info, archive.read(info)) for info in archive.infolist()]
+    with zipfile.ZipFile(package, "w") as archive:
+        for info, data in entries:
+            archive.writestr(info, change(data) if info.filename == entry else data)
+
+
 def generate(case: str, target: Path) -> dict:
     tmp = Path(tempfile.mkdtemp())
     try:
@@ -222,6 +258,8 @@ def generate(case: str, target: Path) -> dict:
         export(col, case, target / "v2.apkg", legacy=True)
         export(col, case, target / "v3.apkg", legacy=False)
         col.close()
+        if rewrite := LEGACY_REWRITES.get(case):
+            rewrite_entry(target / "v2.apkg", "collection.anki21", rewrite)
         models = [read_model(target / f"{v}.apkg") for v in ("v2", "v3")]
         for m in models:
             m.pop("packageVersion")

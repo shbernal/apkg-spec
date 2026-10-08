@@ -46,6 +46,10 @@ claims:
     statement: The collection is schema 11 in versions 1 and 2, and schema 18 in version 3, as `col.ver` records.
     source: rslib/src/import_export/package/meta.rs
     level: MUST
+  - id: APKG-COL-005
+    statement: In schema 11, the `id` of a notetype in `col.models` and of a deck in `col.decks` may be a JSON string of decimal digits instead of a number, and Anki reads it as that number.
+    source: rslib/src/notetype/schema11.rs (NotetypeSchema11), rslib/src/decks/schema11.rs (DeckCommonSchema11)
+    level: MUST
 
   # Media
   - id: APKG-MED-001

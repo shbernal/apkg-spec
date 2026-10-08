@@ -1,0 +1,81 @@
+{
+  "notetypes": [
+    {
+      "name": "Basic",
+      "kind": "normal",
+      "fields": [
+        "Front",
+        "Back"
+      ],
+      "templates": [
+        {
+          "name": "Card 1",
+          "qfmt": "{{Front}}",
+          "afmt": "{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}"
+        }
+      ],
+      "css": ".card {\n    font-family: arial;\n    font-size: 20px;\n    line-height: 1.5;\n    text-align: center;\n    color: black;\n    background-color: white;\n}\n",
+      "sortField": 0,
+      "latexPre": "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
+      "latexPost": "\\end{document}",
+      "latexSvg": false
+    }
+  ],
+  "notes": [
+    {
+      "guid": "string-ids-0",
+      "notetype": "Basic",
+      "fields": [
+        "in parent",
+        "p"
+      ],
+      "tags": []
+    },
+    {
+      "guid": "string-ids-1",
+      "notetype": "Basic",
+      "fields": [
+        "in child",
+        "c"
+      ],
+      "tags": []
+    }
+  ],
+  "cards": [
+    {
+      "note": "string-ids-0",
+      "ord": 0,
+      "deck": "string-ids",
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    },
+    {
+      "note": "string-ids-1",
+      "ord": 0,
+      "deck": "string-ids::Child",
+      "type": 0,
+      "queue": 0,
+      "due": 2,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0
+    }
+  ],
+  "decks": [
+    {
+      "name": "string-ids",
+      "description": ""
+    },
+    {
+      "name": "string-ids::Child",
+      "description": ""
+    }
+  ],
+  "media": {}
+}

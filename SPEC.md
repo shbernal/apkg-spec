@@ -77,6 +77,10 @@ The `col` table has a single row. Its text columns hold JSON:
 - `conf`: collection settings.
 - `tags`: unused in exports (`{}`).
 
+The `id` inside a notetype or deck is usually a number, but older tools wrote it as
+a string of digits, and Anki reads that string as the number [APKG-COL-005]. A
+reader MUST accept both.
+
 ### 3.2 Schema 18
 
 The JSON columns of `col` are empty strings. The same data lives in tables whose

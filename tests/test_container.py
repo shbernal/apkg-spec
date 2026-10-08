@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import zipfile
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from apkg import (
     packages,
     rewrite,
 )
+from model import read_model
 
 ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
 SQLITE_MAGIC = b"SQLite format 3\x00"
@@ -125,3 +127,18 @@ def test_schema_version_by_package_version(conformance: Path) -> None:
         with open_db(collection_bytes(package)) as db:
             (ver,) = db.execute("select ver from col").fetchone()
         assert ver == {"v2": 11, "v3": 18}[version], case
+
+
+@pytest.mark.claim("APKG-COL-005")
+def test_schema11_ids_may_be_strings(conformance: Path) -> None:
+    case = conformance / "string-ids"
+    with open_db(collection_bytes(case / "v2.apkg")) as db:
+        models, decks = db.execute("select models, decks from col").fetchone()
+    for entries in (json.loads(models), json.loads(decks)):
+        assert all(isinstance(e["id"], str) and e["id"].isdigit() for e in entries.values())
+
+    legacy, current = read_model(case / "v2.apkg"), read_model(case / "v3.apkg")
+    legacy.pop("packageVersion"), current.pop("packageVersion")
+    assert legacy == current
+    assert {n["notetype"] for n in legacy["notes"]} == {"Basic"}
+    assert {c["deck"] for c in legacy["cards"]} == {"string-ids", "string-ids::Child"}
