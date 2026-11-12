@@ -2,6 +2,6 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@shbernal/anki-apkg-export": "^6.2.0"
+    "@shbernal/anki-apkg-export": "^6.2.1"
   }
 }

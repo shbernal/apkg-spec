@@ -204,6 +204,10 @@ def stringify_ids(collection: bytes) -> bytes:
         return path.read_bytes()
 
 
+def no_meta(b: Builder) -> None:
+    b.note("Basic", ["read from collection.anki21", "not the placeholder"])
+
+
 def many_notes(b: Builder) -> None:
     for i in range(300):
         b.note("Basic", [f"front {i:03}", f"back {i:03}"], [f"batch{i // 100}"])
@@ -224,11 +228,16 @@ CASES: dict[str, Callable[[Builder], None]] = {
     "scheduling": scheduling,
     "many-notes": many_notes,
     "string-ids": string_ids,
+    "no-meta": no_meta,
 }
 
 # Cases whose legacy collection is rewritten after export, for shapes current
 # Anki reads but no longer writes.
 LEGACY_REWRITES: dict[str, Callable[[bytes], bytes]] = {"string-ids": stringify_ids}
+
+# Cases whose legacy package is written without its `meta` entry, the way older
+# clients and third-party writers leave it.
+WITHOUT_META = {"no-meta"}
 
 
 def export(col: Collection, deck: str, out: Path, *, legacy: bool) -> None:
@@ -241,12 +250,18 @@ def export(col: Collection, deck: str, out: Path, *, legacy: bool) -> None:
     )
 
 
-def rewrite_entry(package: Path, entry: str, change: Callable[[bytes], bytes]) -> None:
+def rewrite_entry(
+    package: Path, entry: str, change: Callable[[bytes], bytes] | None = None
+) -> None:
+    """Pass `entry` through `change`, or leave it out when there is no change."""
     with zipfile.ZipFile(package) as archive:
         entries = [(info, archive.read(info)) for info in archive.infolist()]
     with zipfile.ZipFile(package, "w") as archive:
         for info, data in entries:
-            archive.writestr(info, change(data) if info.filename == entry else data)
+            if info.filename != entry:
+                archive.writestr(info, data)
+            elif change is not None:
+                archive.writestr(info, change(data))
 
 
 def generate(case: str, target: Path) -> dict:
@@ -260,6 +275,8 @@ def generate(case: str, target: Path) -> dict:
         col.close()
         if rewrite := LEGACY_REWRITES.get(case):
             rewrite_entry(target / "v2.apkg", "collection.anki21", rewrite)
+        if case in WITHOUT_META:
+            rewrite_entry(target / "v2.apkg", "meta")
         models = [read_model(target / f"{v}.apkg") for v in ("v2", "v3")]
         for m in models:
             m.pop("packageVersion")
