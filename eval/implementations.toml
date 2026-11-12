@@ -12,4 +12,4 @@
 read = "node adapters/anki-apkg-export/read.mjs {input}"
 write = "node adapters/anki-apkg-export/write.mjs {model} {media} {output} --version {version}"
 write_versions = [2, 3]
-build = "sh -c 'cd ../anki-apkg-export && pnpm run build'"
+build = "sh -c 'if [ -n \"$ANKI_APKG_EXPORT\" ]; then pnpm -C \"$ANKI_APKG_EXPORT\" run build; else npm ci --prefix adapters/anki-apkg-export --no-audit --no-fund; fi'"

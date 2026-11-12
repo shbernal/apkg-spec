@@ -22,6 +22,10 @@ it writes, to `eval/implementations.toml`, then:
 uv run eval/run.py
 ```
 
+The eval needs `uv` and Node 24. It scores
+[`@shbernal/anki-apkg-export`](https://www.npmjs.com/package/@shbernal/anki-apkg-export)
+from npm; set `ANKI_APKG_EXPORT` to a checkout of it to score local changes.
+
 Status: draft, against Anki 26.08.1.
 
 ## License

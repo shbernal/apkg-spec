@@ -5,3 +5,4 @@ __pycache__/
 corpus/local/
 eval/history.jsonl
 eval/.gate-blocks
+node_modules/

@@ -5,15 +5,18 @@
 //
 // The model keys everything by name or guid; the writer wants ids, so each
 // entity gets one here, counted up from a fixed instant.
-// ANKI_APKG_EXPORT points at the package checkout; the sibling repo by default.
+// The npm package by default; ANKI_APKG_EXPORT points at a built checkout instead.
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { pathToFileURL } from "node:url";
 
-const root =
-  process.env.ANKI_APKG_EXPORT ?? path.resolve(import.meta.dirname, "../../../anki-apkg-export");
-const { writeApkg } = await import(pathToFileURL(path.join(root, "dist/index.js")).href);
+const checkout = process.env.ANKI_APKG_EXPORT;
+const { writeApkg } = await import(
+  checkout
+    ? pathToFileURL(path.join(checkout, "dist/index.js")).href
+    : "@shbernal/anki-apkg-export"
+);
 
 const {
   positionals: [modelPath, mediaDir, output],

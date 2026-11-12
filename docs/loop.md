@@ -29,10 +29,15 @@ locked. End the run with `uv run eval/goal.py stop`.
 Headless, for a run nobody watches:
 
 ```sh
-claude -p --permission-mode acceptEdits --add-dir ../anki-apkg-export "$(uv run eval/goal.py start ...)"
+claude -p --permission-mode acceptEdits --add-dir "$ANKI_APKG_EXPORT" "$(uv run eval/goal.py start ...)"
 ```
 
 ## The phases
+
+Phases 2 and 3 change `anki-apkg-export` itself, so they run against a checkout
+of it rather than the npm package. Point `ANKI_APKG_EXPORT` at that checkout;
+the eval then builds it before each run.
+
 
 Each phase is a goal with an end. Do them in order: each one's output is the
 next one's input.
@@ -61,10 +66,10 @@ model.
 ```sh
 uv run eval/goal.py start --target read:anki-apkg-export=100 \
   --lock 'conformance/**' --lock 'oracle/**' --lock 'tests/**' --lock claims.yaml \
-  --clean ../anki-apkg-export
+  --clean "$ANKI_APKG_EXPORT"
 ```
 
-Start the session with `--add-dir ../anki-apkg-export`. The adapter in
+Start the session with `--add-dir "$ANKI_APKG_EXPORT"`. The adapter in
 `adapters/anki-apkg-export/` is not locked, because it is glue that changes
 with the reader's API. The package's own gates (`pnpm test`, `lint`,
 `typecheck`) still apply to every commit there.
@@ -81,7 +86,7 @@ the commit that precedes the second run.
 uv run eval/goal.py start --target write-v2:anki-apkg-export=100 \
   --target read:anki-apkg-export=100 \
   --lock 'conformance/**' --lock 'oracle/**' --lock 'tests/**' --lock claims.yaml \
-  --clean ../anki-apkg-export
+  --clean "$ANKI_APKG_EXPORT"
 ```
 
 The read target is there so the writer cannot be bought with a reader

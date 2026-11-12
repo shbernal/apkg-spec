@@ -2,7 +2,7 @@
 
     uv run eval/goal.py start --target read:anki-apkg-export=100 \\
         --lock 'eval/**' --lock 'oracle/**' --lock 'conformance/**' \\
-        --clean ../anki-apkg-export
+        --clean "$ANKI_APKG_EXPORT"
     uv run eval/goal.py stop
 
 `start` writes eval/goal.json, commits it, and prints the `/goal` condition to

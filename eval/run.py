@@ -278,6 +278,9 @@ def locked_changes(goal: dict) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gate", action="store_true")
+    parser.add_argument(
+        "--strict", action="store_true", help="fail on a failed build or any score under 100%%"
+    )
     parser.add_argument("--heldout", action="store_true")
     parser.add_argument("--only", help="score only this implementation (and skip claims)")
     parser.add_argument("-v", "--verbose", action="store_true", help="list every failure")
@@ -290,6 +293,7 @@ def main() -> int:
         metrics["claims"] = score_claims()
         metrics["spec"] = score_spec()
     cache: dict = {}
+    build_failed = False
     for name, impl in implementations.items():
         if args.only and name != args.only:
             continue
@@ -299,6 +303,7 @@ def main() -> int:
             )
             if proc.returncode != 0:
                 print(f"BUILD FAIL {name}: {proc.stderr.strip()[-500:]}")
+                build_failed = True
         for kind, score in score_implementation(name, impl, pkgs, cache).items():
             metrics[f"{kind}:{name}"] = score
 
@@ -325,6 +330,8 @@ def main() -> int:
             + "\n"
         )
 
+    if args.strict and (build_failed or any(s.passed < s.total for s in metrics.values())):
+        return 1
     if not args.gate:
         return 0
     if not GOAL.exists():

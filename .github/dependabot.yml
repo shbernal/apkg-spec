@@ -1,0 +1,22 @@
+version: 2
+
+# The anki wheel is the oracle and stays pinned by hand; only the scored
+# implementation and the actions move on their own.
+updates:
+  - package-ecosystem: npm
+    directory: /adapters/anki-apkg-export
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns:
+          - "*"

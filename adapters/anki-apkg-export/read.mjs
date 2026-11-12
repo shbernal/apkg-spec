@@ -3,15 +3,18 @@
 //
 //   node adapters/anki-apkg-export/read.mjs <package.apkg>
 //
-// ANKI_APKG_EXPORT points at the package checkout; the sibling repo by default.
+// The npm package by default; ANKI_APKG_EXPORT points at a built checkout instead.
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const root =
-  process.env.ANKI_APKG_EXPORT ?? path.resolve(import.meta.dirname, "../../../anki-apkg-export");
-const { readApkg } = await import(pathToFileURL(path.join(root, "dist/index.js")).href);
+const checkout = process.env.ANKI_APKG_EXPORT;
+const { readApkg } = await import(
+  checkout
+    ? pathToFileURL(path.join(checkout, "dist/index.js")).href
+    : "@shbernal/anki-apkg-export"
+);
 
 const pkg = await readApkg(readFileSync(process.argv[2]));
 const names = new Map(pkg.notetypes.map((nt) => [nt.id, nt.name]));
