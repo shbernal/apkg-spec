@@ -16,6 +16,7 @@ from apkg import (
     packages,
     rewrite,
 )
+from fixtures import WITHOUT_META
 from model import read_model
 
 ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
@@ -41,6 +42,8 @@ def test_meta_names_the_version_whose_collection_is_present(
     conformance: Path, tmp_path: Path
 ) -> None:
     for case, _, package in packages(conformance):
+        if case in WITHOUT_META:
+            continue
         version = meta_version(package)
         entry = {1: "collection.anki2", 2: "collection.anki21", 3: "collection.anki21b"}[version]
         with zipfile.ZipFile(package) as archive:
@@ -89,6 +92,8 @@ def test_version_without_meta(conformance: Path, tmp_path: Path) -> None:
 @pytest.mark.claim("APKG-VER-003")
 def test_current_anki_writes_meta_with_version_2_or_3(conformance: Path) -> None:
     for case, version, package in packages(conformance):
+        if case in WITHOUT_META:
+            continue
         assert meta_version(package) == {"v2": 2, "v3": 3}[version], case
     # The only export choice that bears on the version is the `legacy` flag.
     options = {f.name for f in ExportAnkiPackageOptions.DESCRIPTOR.fields}
